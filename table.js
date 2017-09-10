@@ -12,6 +12,12 @@ $(function(){
       m_table2 = data_2[0];
       MargeTable(m_table1, m_table2);
       Output(m_table1);
+      SortTable($(m_table_name + " tr"), 2);
+  });
+  $(".tsort").click(function(){
+    col = this.cellIndex;
+    console.log(col);
+    //SortTable(this.closest('tr'), col);
   });
 });
 
@@ -25,12 +31,11 @@ function Output(data){
  **/
 // 追加
 function AddTable(data, table_name){
-  var th = GetTableCol(table_name);
+  var th = GetTableHeader(table_name);
   var table = $(table_name);
   $.each(data, function(i, e) {
     var my_tr = $('<tr></tr>').appendTo(table);
     $.each(th, function(j, e2) {
-      console.log(e2);
       $("<td>" + e[e2] + "</td>").appendTo(my_tr);
     });
   });
@@ -39,7 +44,6 @@ function AddTable(data, table_name){
 // 結合
 function MargeTable(data1, data2){
   $.each(data1, function(i, e1) {
-    console.log(e1.id);
     $.each(data2, function(j, e2) {
       if(e1.id == e2.id){
         e1.kana = e2.kana;
@@ -47,14 +51,30 @@ function MargeTable(data1, data2){
     });
   });
 }
+// ソート
+function SortTable(table, col_id){
+  GetRowData(table, col_id);
+}
 // ヘッダの情報を取得
-function GetTableCol(table_name){
+function GetTableHeader(table_name){
   var ret = [];
   var th = $(table_name + " tr").first().children();
   $.each(th, function(i) {
     var td = th.eq(i).text();
     ret.push(td);
   });
+  return ret;
+}
+// 列データの取得(thを除く)
+function GetRowData(table, col_id){
+  var ret = [];
+  $.each(table, function(i) {
+    var cell = table.eq(i).children().eq(col_id);
+    if(cell.is("td")){
+      ret.push(cell.text());
+    }
+  });
+  console.log(ret);
   return ret;
 }
 
