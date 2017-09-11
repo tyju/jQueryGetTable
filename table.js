@@ -12,27 +12,33 @@ $(function(){
       m_table2 = data_2[0];
       MargeTable(m_table1, m_table2);
       Output(m_table1);
-      SortTable($(m_table_name + " tr"), 2);
   });
   $(".tsort").click(function(){
     col = this.cellIndex;
-    console.log(col);
-    //SortTable(this.closest('tr'), col);
+    SortTable($(m_table_name + " tr"), col);
   });
 });
 
 // 出力関係
 function Output(data){
-  AddTable(data, m_table_name);
+  SetTable(data, m_table_name);
 }
 
 /**
   *テーブル関係
  **/
+// 削除
+function DelTable(table_name){
+  var table = $(table_name + " tr");
+  while($(table_name + " tr").length > 1) {
+    $(table_name + " tr:last").remove();
+  }
+}
 // 追加
-function AddTable(data, table_name){
-  var th = GetTableHeader(table_name);
+function SetTable(data, table_name){
   var table = $(table_name);
+  DelTable(table_name); // 初期化
+  var th = GetTableHeader($(table_name + " tr"));
   $.each(data, function(i, e) {
     var my_tr = $('<tr></tr>').appendTo(table);
     $.each(th, function(j, e2) {
@@ -53,12 +59,15 @@ function MargeTable(data1, data2){
 }
 // ソート
 function SortTable(table, col_id){
-  GetRowData(table, col_id);
+  var header = GetTableHeader(table);
+  var data = GetTableData(table);
+  data.sort(function(a, b) { return b[header[col_id]] < a[header[col_id]] ? 1 : -1; });
+  Output(data);
 }
 // ヘッダの情報を取得
-function GetTableHeader(table_name){
+function GetTableHeader(table){
   var ret = [];
-  var th = $(table_name + " tr").first().children();
+  var th = table.first().children();
   $.each(th, function(i) {
     var td = th.eq(i).text();
     ret.push(td);
@@ -75,6 +84,22 @@ function GetRowData(table, col_id){
     }
   });
   console.log(ret);
+  return ret;
+}
+// データを二次元配列として取得(thを除く)
+function GetTableData(table){
+  var ret = [];
+  var header = GetTableHeader(table);
+  $.each(table, function(i) {
+    var cells = table.eq(i).children();
+    if(cells.eq(1).is("td")){
+      ret[i-1] = {};
+      $.each(cells, function(j) {
+        var cell = cells.eq(j);
+        ret[i-1][header[j]] = cell.text();
+      });
+    }
+  });
   return ret;
 }
 
