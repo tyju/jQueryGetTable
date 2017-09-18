@@ -1,5 +1,4 @@
-var m_table1 = {};
-var m_table2 = {};
+var m_table = {};
 var m_table_name = "#table";
 
 $(function(){
@@ -8,10 +7,11 @@ $(function(){
     GetTable("./table2.json")
   )
   .done(function(data_1, data_2) {
-      m_table1 = data_1[0];
-      m_table2 = data_2[0];
-      MargeTable(m_table1, m_table2);
-      Output(m_table1);
+      var tbl1 = data_1[0];
+      var tbl2 = data_2[0];
+      MargeTable(tbl1, tbl2);
+      m_table = tbl1;
+      Output(m_table);
   });
   $(".tsort").click(function(){
     col = this.cellIndex;
@@ -66,7 +66,8 @@ function MargeTable(data1, data2){
 // ソート
 function SortTable(table, col_id){
   var header = GetTableHeader(table);
-  var data = GetTableData(table);
+  //var data = GetTableData(table);
+  var data = m_table;
   data.sort(function(a, b) { return b[header[col_id]] < a[header[col_id]] ? 1 : -1; });
   Output(data);
 }
@@ -77,34 +78,6 @@ function GetTableHeader(table){
   $.each(th, function(i) {
     var td = th.eq(i).text();
     ret.push(td);
-  });
-  return ret;
-}
-// 列データの取得(thを除く)
-function GetRowData(table, col_id){
-  var ret = [];
-  $.each(table, function(i) {
-    var cell = table.eq(i).children().eq(col_id);
-    if(cell.is("td")){
-      ret.push(cell.text());
-    }
-  });
-  console.log(ret);
-  return ret;
-}
-// データを二次元配列として取得(thを除く)
-function GetTableData(table){
-  var ret = [];
-  var header = GetTableHeader(table);
-  $.each(table, function(i) {
-    var cells = table.eq(i).children();
-    if(cells.eq(1).is("td")){
-      ret[i-1] = {};
-      $.each(cells, function(j) {
-        var cell = cells.eq(j);
-        ret[i-1][header[j]] = cell.text();
-      });
-    }
   });
   return ret;
 }
