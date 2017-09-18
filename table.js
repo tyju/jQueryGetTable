@@ -1,5 +1,4 @@
 var m_table = {};
-var m_table_name = "#table";
 
 $(function(){
   $.when(
@@ -12,10 +11,6 @@ $(function(){
       MargeTable(tbl1, tbl2);
       m_table = tbl1;
       Output(m_table);
-  });
-  $(".tsort").click(function(){
-    col = this.cellIndex;
-    SortTable($(m_table_name + " tr"), col);
   });
 });
 
@@ -64,12 +59,11 @@ function MargeTable(data1, data2){
   });
 }
 // ソート
-function SortTable(table, col_id){
-  var header = GetTableHeader(table);
-  //var data = GetTableData(table);
-  var data = m_table;
-  data.sort(function(a, b) { return b[header[col_id]] < a[header[col_id]] ? 1 : -1; });
-  Output(data);
+function SortTable(table, col_id, is_asc){
+  var rev = 1;
+  if(is_asc == false){rev = -1;}
+  m_table.sort(function(a, b) { return (b[col_id] < a[col_id] ? 1 : -1) * rev; });
+  Output(m_table);
 }
 // ヘッダの情報を取得
 function GetTableHeader(table){
