@@ -52,7 +52,13 @@ function MargeTable(data1, data2){
   $.each(data1, function(i, e1) {
     $.each(data2, function(j, e2) {
       if(e1.id == e2.id){
-        e1.kana = e2.kana;
+        $.each(e2, function(k, col) {
+          // データの重複チェック
+          if(k in e1 == true && k != "id"){
+            console.warn("duplicate data: " + k);
+          }
+          e1[k] = col;
+        });
       }
     });
   });
